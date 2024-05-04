@@ -72,3 +72,21 @@ def tonelli_shanks(a, p):
         m = i
 
     return r
+
+# returns jacobis symbol for (m/n); n is odd
+def jacobi(m ,n):
+    if m == 1:
+        return 1
+    if m >= n:
+        return jacobi(m % n, n)
+    
+    if m % 2 == 0:
+        if n % 8 == 3 or n % 8 == 5:
+            return -jacobi(m/2, n)
+        else:
+            return jacobi(m/2, n)
+        
+        if m % 4 == 3 and n % 4 == 3:
+            return -jacobi(n, m)
+        else:
+            return jacobi(n, m)
