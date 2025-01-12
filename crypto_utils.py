@@ -1,5 +1,10 @@
-# fast modular pow
-def mod_pow(a, n, m):
+import random
+
+"""fast modular pow
+@param a: base 
+@param n: exponent 
+@param m: modulo """
+def mod_pow(a : int, n : int, m : int) -> int:
     res = 1
     while n > 0:
         # for every 1 in binary representation
@@ -11,17 +16,17 @@ def mod_pow(a, n, m):
     return res
 
 # returns (d, m, n) where d = ma + nb
-def extended_gcd(a, b):
+def extended_gcd(a : int, b : int) -> tuple[int, int, int]: 
     if b == 0:
         return (a, 1, 0)
     d, m, n = extended_gcd(b, a%b)
     return (d, n, m - a//b * n)
 
-def mod_inv(a, p):
-    d, m, n = extended_gcd(a, p)
+def mod_inv(a : int, mod : int) -> int:
+    d, m, n = extended_gcd(a, mod)
     if d != 1:
         print("gcd(a, p) != 0 !!!")
-    return m % p
+    return m % mod
 
 def legendreSymbol(a: int, p: int) -> int:
     res = pow(a, (p-1) // 2, p)
@@ -86,7 +91,34 @@ def jacobi(m ,n):
         else:
             return jacobi(m/2, n)
         
-        if m % 4 == 3 and n % 4 == 3:
-            return -jacobi(n, m)
+    if m % 4 == 3 and n % 4 == 3:
+        return -jacobi(n, m)
+    else:
+        return jacobi(n, m)
+        
+# Miller-rabin primality test for number n with probability 1 - 1/4^k
+def miller_rabin_test(n : int, k: int = 20):
+    if n <= 3:
+        return n != 1
+
+    # write n as 2^r * d + 1
+    r = 0
+    d = n - 1
+    while d % 2 == 0:
+        r += 1
+        d //= 2
+    
+    for _ in range(k):
+        a = random.randrange(2, n - 1)
+        x = mod_pow(a, d, n)
+        if x == 1 or x == n - 1:  # n - 1 = -1 (mod n)
+            continue
+
+        for _ in range(r - 1):
+            x = mod_pow(x, 2, n)
+            if x == n - 1:
+                break
         else:
-            return jacobi(n, m)
+            return False
+    
+    return True
