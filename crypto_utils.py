@@ -1,18 +1,14 @@
 import random
 
-"""fast modular pow
-@param a: base 
-@param n: exponent 
-@param m: modulo """
-def mod_pow(a : int, n : int, m : int) -> int:
+def mod_pow(base : int, exponent : int, modulo : int) -> int:
     res = 1
-    while n > 0:
+    while exponent > 0:
         # for every 1 in binary representation
-        if n % 2 == 1:
-            res = (res * a) % m
-        # update a
-        a = (a * a) % m
-        n //= 2
+        if exponent % 2 == 1:
+            res = (res * base) % modulo
+        # update base
+        base = (base * base) % modulo
+        exponent //= 2
     return res
 
 # returns (d, m, n) where d = ma + nb
@@ -122,3 +118,21 @@ def miller_rabin_test(n : int, k: int = 20):
             return False
     
     return True
+
+def fermat_factor(n : int, max_iterations: int = 10000) -> tuple[int, int]:
+    """:returns a tuple of factors of n or (-1, -1) if factoring could not be done"""
+    if n % 2 == 0:
+        return (2, n // 2)
+
+    s = int(n ** 0.5) + 1
+    t = int((s * s - n) ** 0.5)
+    it = 0
+    while (t * t != s*s - n) and it < max_iterations:
+        s += 1
+        t = int((s * s - n) ** 0.5)
+        it += 1
+
+    p = s + t
+    q = s - t
+
+    return (s - t, s + t) if p * q == n else (-1, -1)
