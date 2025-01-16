@@ -1,4 +1,6 @@
 import random
+import math
+
 
 def mod_pow(base : int, exponent : int, modulo : int) -> int:
     res = 1
@@ -136,3 +138,23 @@ def fermat_factor(n : int, max_iterations: int = 10000) -> tuple[int, int]:
     q = s - t
 
     return (s - t, s + t) if p * q == n else (-1, -1)
+
+def pollards_rho_algorithm(n : int, max_iterations: int = 10000) -> int:
+    """returns a factor of n or -1 if factoring could not be done"""
+    if n % 2 == 0:
+        return 2
+
+    def f(x : int) -> int:
+        return (x * x + 1) % n
+
+    x = 2
+    y = x
+    d = 1
+    it = 0
+    while d == 1 and it < max_iterations:
+        x = f(x)
+        y = f(f(y))
+        d = math.gcd(abs(x - y), n)
+        it += 1
+
+    return d if d != n else -1
